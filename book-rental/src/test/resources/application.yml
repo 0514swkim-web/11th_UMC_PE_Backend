@@ -6,6 +6,11 @@ spring:
     url: jdbc:h2:mem:${random.uuid};MODE=MySQL;DATABASE_TO_LOWER=TRUE
     username: sa
     password:
+  jpa:
+    hibernate:
+      # H2와 MySQL의 컬럼 타입 이름이 달라 테스트에서는 구조 검사를 끔 (실제 MySQL에서는 validate)
+      ddl-auto: none
+    open-in-view: false
   sql:
     init:
       mode: always
