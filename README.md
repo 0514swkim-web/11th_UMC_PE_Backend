@@ -23,7 +23,7 @@ UMC 웹 파트 워크북 백엔드 실습·미션 기록입니다.
 | 0 | 클라이언트와 서버, HTTP | | [POST 201](docs/captures/week00/03-post-created.png) · [404](docs/captures/week00/04-not-found.png) |
 | 1 | 요구사항을 데이터로 바꾸기 (ERD) | | [ERD](week01-erd/erd.png) |
 | 2 | SQL로 데이터 다루기 | | [미션 1](docs/captures/week02/02-mission-1.png) · [확장](docs/captures/week02/05-extension.png) |
-| 3 | 첫 API 만들고 검증하기 | | |
+| 3 | 첫 API 만들고 검증하기 | | [카테고리 조회](docs/captures/week03/04-mission-category.png) · [대여 DB](docs/captures/week03/06-mission-rental-db.png) |
 | 4 | ORM | | |
 | 5 | 화면과 API를 처음 연결하기 | | |
 | 6 | 입력한 데이터를 저장하기 | | |
