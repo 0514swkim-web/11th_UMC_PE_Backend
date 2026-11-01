@@ -1,0 +1,49 @@
+{
+  "info": {
+    "name": "UMC 0주차 - JSONPlaceholder 실습",
+    "description": "워크북 0주차 6장 Postman 실습 4개. Postman → Import로 이 파일을 불러와 순서대로 Send 하세요.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "실습 1. GET 1번 게시글 조회 (200 OK)",
+      "request": {
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/posts/1"
+      }
+    },
+    {
+      "name": "실습 2. Query Parameter로 1번 게시글 댓글 검색",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/comments?postId=1",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["comments"],
+          "query": [{ "key": "postId", "value": "1" }]
+        }
+      }
+    },
+    {
+      "name": "실습 3. POST 새 게시글 등록 (201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"첫 번째 API 테스트 글\",\n  \"body\": \"Postman으로 백엔드 서버에 데이터를 전송했습니다!\",\n  \"userId\": 1\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "https://jsonplaceholder.typicode.com/posts"
+      }
+    },
+    {
+      "name": "실습 4. 없는 게시글 조회 (404 Not Found)",
+      "request": {
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/posts/99999"
+      }
+    }
+  ]
+}

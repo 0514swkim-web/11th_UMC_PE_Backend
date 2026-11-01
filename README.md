@@ -20,7 +20,7 @@ UMC 웹 파트 워크북 백엔드 실습·미션 기록입니다.
 ## 진행 현황
 | 주차 | 주제 | PR | 핵심 캡처 |
 |---|---|---|---|
-| 0 | 클라이언트와 서버, HTTP | | |
+| 0 | 클라이언트와 서버, HTTP | | [POST 201](docs/captures/week00/03-post-created.png) · [404](docs/captures/week00/04-not-found.png) |
 | 1 | 요구사항을 데이터로 바꾸기 (ERD) | | |
 | 2 | SQL로 데이터 다루기 | | |
 | 3 | 첫 API 만들고 검증하기 | | |
