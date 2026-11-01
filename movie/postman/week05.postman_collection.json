@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "UMC 5주차 - 영화 평점 조회 API",
+    "description": "movie 서버 실행 후 Send. baseUrl = http://localhost:8080",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "실습 1. 닉네임 중복 (사용 불가)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/members/nickname/수현",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "members",
+            "nickname",
+            "수현"
+          ]
+        }
+      }
+    },
+    {
+      "name": "실습 1. 닉네임 중복 (사용 가능)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/members/nickname/새닉네임",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "members",
+            "nickname",
+            "새닉네임"
+          ]
+        }
+      }
+    },
+    {
+      "name": "실습 2. 이메일 중복 (사용 불가)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/members/email/noco@umc.com",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "members",
+            "email",
+            "noco@umc.com"
+          ]
+        }
+      }
+    },
+    {
+      "name": "실습 2. 이메일 중복 (사용 가능)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/members/email/new@umc.com",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "members",
+            "email",
+            "new@umc.com"
+          ]
+        }
+      }
+    },
+    {
+      "name": "실습 3. 유저별 평점 (최신순)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/members/1/ratings",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "members",
+            "1",
+            "ratings"
+          ]
+        }
+      }
+    },
+    {
+      "name": "실습 3. 없는 유저 평점 (404)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/members/999/ratings",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "members",
+            "999",
+            "ratings"
+          ]
+        }
+      }
+    }
+  ]
+}
