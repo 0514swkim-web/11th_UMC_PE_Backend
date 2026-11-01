@@ -15,4 +15,8 @@ public class RentalService {
     public void createRental(Map<String, Object> body) {
         rentalRepository.save(body);
     }
+
+    public boolean returnRental(Long rentalId) {
+        return rentalRepository.markReturned(rentalId) > 0;
+    }
 }

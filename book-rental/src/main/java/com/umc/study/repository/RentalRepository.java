@@ -18,4 +18,10 @@ public class RentalRepository {
                 + "VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY))";
         jdbcTemplate.update(sql, body.get("userId"), body.get("bookId"));
     }
+
+    // 바뀐 행 수를 돌려줌 (0이면 그런 대여 기록이 없음)
+    public int markReturned(Long rentalId) {
+        String sql = "UPDATE rental SET returned_at = NOW() WHERE rental_id = ?";
+        return jdbcTemplate.update(sql, rentalId);
+    }
 }
