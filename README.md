@@ -25,6 +25,6 @@ UMC 웹 파트 워크북 백엔드 실습·미션 기록입니다.
 | 2 | SQL로 데이터 다루기 | | [미션 1](docs/captures/week02/02-mission-1.png) · [확장](docs/captures/week02/05-extension.png) |
 | 3 | 첫 API 만들고 검증하기 | | [카테고리 조회](docs/captures/week03/04-mission-category.png) · [대여 DB](docs/captures/week03/06-mission-rental-db.png) |
 | 4 | ORM | | [등록 201](docs/captures/week04/02-post-201.png) · [SQL 로그](docs/captures/week04/08-sql-log.png) |
-| 5 | 화면과 API를 처음 연결하기 | | |
+| 5 | 화면과 API를 처음 연결하기 | | [CORS 에러](docs/captures/week05/01-cors-error.png) · [umcine 화면](docs/captures/week05/07-umcine-members.png) |
 | 6 | 입력한 데이터를 저장하기 | | |
 | 7 | 로그인한 사용자를 구분하기 | | |
