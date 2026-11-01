@@ -1,0 +1,222 @@
+{
+  "info": {
+    "name": "UMC 4주차 - ORM 도서 대여 API",
+    "description": "서버 실행 후 순서대로 Send. baseUrl = http://localhost:8080",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "실습 1. 도서 전체 조회 (최신순, 200)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/books",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books"
+          ]
+        }
+      }
+    },
+    {
+      "name": "실습 2. 도서 등록 (201)",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/books",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books"
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categoryId\": 1,\n  \"title\": \"클린 코드\",\n  \"description\": \"애자일 소프트웨어 장인 정신\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "실습 2. 빈 제목 (400)",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/books",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books"
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categoryId\": 1,\n  \"title\": \"\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "미션. 없는 카테고리 (404)",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/books",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books"
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categoryId\": 999,\n  \"title\": \"없는 카테고리 책\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "미션. 카테고리별 조회 (JPA)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/books/category/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books",
+            "category",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "선택 미션. 제목 키워드 검색",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/books?keyword=우주",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "books"
+          ],
+          "query": [
+            {
+              "key": "keyword",
+              "value": "우주"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "대여 생성 (201)",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/rentals",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "rentals"
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"bookId\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "반납 처리 (200)",
+      "request": {
+        "method": "PATCH",
+        "url": {
+          "raw": "{{baseUrl}}/rentals/1/return",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "rentals",
+            "1",
+            "return"
+          ]
+        }
+      }
+    },
+    {
+      "name": "없는 대여 기록 반납 (404)",
+      "request": {
+        "method": "PATCH",
+        "url": {
+          "raw": "{{baseUrl}}/rentals/999/return",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "rentals",
+            "999",
+            "return"
+          ]
+        }
+      }
+    }
+  ]
+}
