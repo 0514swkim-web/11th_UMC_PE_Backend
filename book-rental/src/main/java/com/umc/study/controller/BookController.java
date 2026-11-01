@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,9 +25,10 @@ public class BookController {
     private final BookService bookService;
 
     // GET http://localhost:8080/books (최신 등록순)
+    // GET http://localhost:8080/books?keyword=도서 (제목 검색)
     @GetMapping
-    public List<BookResponse> getBooks() {
-        return bookService.getBooks();
+    public List<BookResponse> getBooks(@RequestParam(required = false) String keyword) {
+        return bookService.getBooks(keyword);
     }
 
     // GET http://localhost:8080/books/category/1
