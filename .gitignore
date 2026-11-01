@@ -17,3 +17,14 @@ dist/
 Thumbs.db
 .vscode/*
 !.vscode/extensions.json
+
+# Spring / Gradle / IntelliJ
+build/
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+out/
+bin/
+.idea/
+*.iml
+application-local.yml
+application-local.properties
