@@ -26,5 +26,5 @@ UMC 웹 파트 워크북 백엔드 실습·미션 기록입니다.
 | 3 | 첫 API 만들고 검증하기 | | [카테고리 조회](docs/captures/week03/04-mission-category.png) · [대여 DB](docs/captures/week03/06-mission-rental-db.png) |
 | 4 | ORM | | [등록 201](docs/captures/week04/02-post-201.png) · [SQL 로그](docs/captures/week04/08-sql-log.png) |
 | 5 | 화면과 API를 처음 연결하기 | | [CORS 에러](docs/captures/week05/01-cors-error.png) · [umcine 화면](docs/captures/week05/07-umcine-members.png) |
-| 6 | 입력한 데이터를 저장하기 | | |
+| 6 | 입력한 데이터를 저장하기 | | [회원가입 201](docs/captures/week06/04-signup-201.png) · [평점 등록 201](docs/captures/week06/08-rating-201.png) · [남의 평점 403](docs/captures/week06/14-rating-403.png) |
 | 7 | 로그인한 사용자를 구분하기 | | |
