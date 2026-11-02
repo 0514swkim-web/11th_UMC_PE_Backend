@@ -1,0 +1,131 @@
+package com.umc.movie;
+
+import com.umc.movie.repository.MemberRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+// 6주차: 저장 API의 성공·실패 응답을 코드로 확인 (각 테스트는 끝나면 롤백되어 서로 영향 없음)
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+class SignUpRatingWriteApiTest {
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Autowired
+    MemberRepository memberRepository;
+
+    private static final String SIGN_UP_BODY = """
+            {"email": "umc@example.com", "password": "Umc!1234", "nickname": "moviefan"}
+            """;
+
+    @Test
+    void 회원가입_성공은_201이고_password는_응답에_없다() throws Exception {
+        mockMvc.perform(post("/members").contentType(MediaType.APPLICATION_JSON).content(SIGN_UP_BODY))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.isSuccess").value(true))
+                .andExpect(jsonPath("$.code").value("COMMON201"))
+                .andExpect(jsonPath("$.result.email").value("umc@example.com"))
+                .andExpect(jsonPath("$.result.password").doesNotExist());
+
+        String saved = memberRepository.findAll().stream()
+                .filter(m -> m.getEmail().equals("umc@example.com"))
+                .findFirst().orElseThrow().getPassword();
+        assertThat(saved).startsWith("$2a$").hasSize(60).isNotEqualTo("Umc!1234");
+    }
+
+    @Test
+    void 잘못된_이메일_형식은_400() throws Exception {
+        mockMvc.perform(post("/members").contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"email": "wrong-email", "password": "Umc!1234", "nickname": "newbie"}
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.isSuccess").value(false))
+                .andExpect(jsonPath("$.code").value("COMMON4001"))
+                .andExpect(jsonPath("$.message").value("올바른 이메일 형식이 아닙니다."));
+    }
+
+    @Test
+    void 이미_있는_이메일은_409() throws Exception {
+        mockMvc.perform(post("/members").contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"email": "noco@umc.com", "password": "Umc!1234", "nickname": "newbie"}
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("COMMON4092"))
+                .andExpect(jsonPath("$.message").value("이미 사용 중인 이메일입니다."));
+    }
+
+    @Test
+    void 평점_등록_201_후_같은_영화는_409() throws Exception {
+        String body = """
+                {"movieId": 680, "score": 5, "comment": "펄프 픽션 최고"}
+                """;
+        mockMvc.perform(post("/members/1/ratings").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.result").isNumber());
+
+        mockMvc.perform(post("/members/1/ratings").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("이미 이 영화에 평점을 남기셨습니다."));
+    }
+
+    @Test
+    void 별점_범위_밖은_400() throws Exception {
+        mockMvc.perform(post("/members/1/ratings").contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"movieId": 680, "score": 6}
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("별점은 5점 이하여야 합니다."));
+    }
+
+    @Test
+    void 평점_수정_200_삭제_204() throws Exception {
+        mockMvc.perform(patch("/members/1/ratings/1").contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"score": 3, "comment": "다시 보니 보통"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("COMMON200"));
+
+        mockMvc.perform(get("/members/1/ratings"))
+                .andExpect(jsonPath("$[1].score").value(3));
+
+        mockMvc.perform(delete("/members/1/ratings/1"))
+                .andExpect(status().isNoContent())
+                .andExpect(content().string(""));
+
+        mockMvc.perform(get("/members/1/ratings"))
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    void 없는_평점은_404_남의_평점은_403() throws Exception {
+        mockMvc.perform(delete("/members/1/ratings/999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("COMMON404"));
+
+        // 3번 평점은 2번 회원(민서) 것
+        mockMvc.perform(delete("/members/1/ratings/3"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("COMMON403"));
+    }
+}
