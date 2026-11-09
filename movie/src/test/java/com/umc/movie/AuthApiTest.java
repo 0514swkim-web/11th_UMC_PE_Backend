@@ -1,5 +1,6 @@
 package com.umc.movie;
 
+import com.umc.movie.util.JwtUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,6 +24,9 @@ class AuthApiTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    JwtUtil jwtUtil;
 
     private void signUp() throws Exception {
         mockMvc.perform(post("/members").contentType(MediaType.APPLICATION_JSON)
@@ -72,5 +77,24 @@ class AuthApiTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer abc.def.ghi"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value("AUTH401_3"));
+    }
+
+    @Test
+    void 내_정보_조회는_토큰_주인의_정보() throws Exception {
+        String token = jwtUtil.createAccessToken(1L, "noco@umc.com"); // 1번 회원 = 수현
+        mockMvc.perform(get("/members/me").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("COMMON200"))
+                .andExpect(jsonPath("$.result.email").value("noco@umc.com"))
+                .andExpect(jsonPath("$.result.nickname").value("수현"))
+                .andExpect(jsonPath("$.result.password").doesNotExist());
+    }
+
+    @Test
+    void 없는_회원의_토큰이면_404_MEMBER404_1() throws Exception {
+        String token = jwtUtil.createAccessToken(999L, "ghost@umc.com");
+        mockMvc.perform(get("/members/me").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("MEMBER404_1"));
     }
 }
