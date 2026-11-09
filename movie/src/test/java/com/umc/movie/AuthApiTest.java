@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -96,5 +97,39 @@ class AuthApiTest {
         mockMvc.perform(get("/members/me").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("MEMBER404_1"));
+    }
+
+    private org.springframework.test.web.servlet.ResultActions patchNickname(String nickname) throws Exception {
+        String token = jwtUtil.createAccessToken(1L, "noco@umc.com"); // 1번 회원 = 수현
+        return mockMvc.perform(patch("/members/me").header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"nickname\": \"" + nickname + "\"}"));
+    }
+
+    @Test
+    void 닉네임_수정_200() throws Exception {
+        patchNickname("새닉네임")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("회원 정보를 수정했습니다."))
+                .andExpect(jsonPath("$.result.nickname").value("새닉네임"));
+    }
+
+    @Test
+    void 내가_쓰는_닉네임은_그대로_200() throws Exception {
+        patchNickname("수현").andExpect(status().isOk());
+    }
+
+    @Test
+    void 남이_쓰는_닉네임은_409_MEMBER409_1() throws Exception {
+        patchNickname("민서")
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("MEMBER409_1"));
+    }
+
+    @Test
+    void 닉네임_길이_규칙_위반은_400() throws Exception {
+        patchNickname("가")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("닉네임은 2자 이상 12자 이하여야 합니다."));
     }
 }

@@ -3,6 +3,7 @@ package com.umc.movie.service;
 import com.umc.movie.dto.EmailCheckResponse;
 import com.umc.movie.dto.MemberInfoResponse;
 import com.umc.movie.dto.MemberResponse;
+import com.umc.movie.dto.MemberUpdateRequest;
 import com.umc.movie.dto.NicknameCheckResponse;
 import com.umc.movie.dto.SignUpRequest;
 import com.umc.movie.entity.Member;
@@ -61,6 +62,24 @@ public class MemberService {
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "MEMBER404_1",
                         "해당 회원을 찾을 수 없습니다."));
 
+        return MemberInfoResponse.from(member);
+    }
+
+    // 7주차: 내 닉네임 수정. 내가 이미 쓰는 닉네임은 중복으로 보지 않음
+    @Transactional
+    public MemberInfoResponse updateMyInfo(Long memberId, MemberUpdateRequest request) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "MEMBER404_1",
+                        "해당 회원을 찾을 수 없습니다."));
+
+        // 나를 뺀 다른 회원이 쓰는 닉네임이면 409 (DB UNIQUE 위반 전에 우리가 정한 응답으로)
+        if (memberRepository.existsByNicknameAndMemberIdNot(request.nickname(), memberId)) {
+            throw new ApiException(HttpStatus.CONFLICT, "MEMBER409_1",
+                    "이미 사용 중인 닉네임입니다.");
+        }
+
+        member.updateNickname(request.nickname()); // @Transactional 안이라 변경 감지로 UPDATE
+        memberRepository.save(member);
         return MemberInfoResponse.from(member);
     }
 }
