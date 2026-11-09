@@ -16,3 +16,8 @@ spring:
       mode: always
       schema-locations: classpath:schema.sql
       data-locations: classpath:data.sql
+
+# 테스트 전용 가짜 키 (실제 실행용 JWT_SECRET과 다른 값)
+jwt:
+  secret: test-only-jwt-secret-key-for-h2-tests-0123456789
+  access-expiration: 3600

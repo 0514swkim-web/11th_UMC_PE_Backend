@@ -10,3 +10,8 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+
+# 실행 구성 → 환경 변수에 JWT_SECRET(32자 이상), JWT_ACCESS_EXPIRATION(초) 등록
+jwt:
+  secret: ${JWT_SECRET} # 토큰 서명용 비밀키. 코드에 직접 쓰지 않음
+  access-expiration: ${JWT_ACCESS_EXPIRATION} # 토큰 유효시간(초), 3600 = 1시간
