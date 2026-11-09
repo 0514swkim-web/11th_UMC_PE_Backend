@@ -1,0 +1,545 @@
+{
+  "info": {
+    "name": "UMC 7주차 - 로그인·토큰 인증 API",
+    "description": "movie 서버 실행 후 위에서부터 순서대로 Send (또는 컬렉션 Run). 1·2번이 매번 새 회원 A·B를 만들고, 3·4번이 토큰 A·B를, 5번이 ratingId를 컬렉션 변수에 저장해 뒤 요청들이 사용.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "emailA",
+      "value": ""
+    },
+    {
+      "key": "emailB",
+      "value": ""
+    },
+    {
+      "key": "tokenA",
+      "value": ""
+    },
+    {
+      "key": "tokenB",
+      "value": ""
+    },
+    {
+      "key": "ratingId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. 회원 A 가입 (201)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/members",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "members"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"a{{$timestamp}}@umc.com\",\n  \"password\": \"Umc!1234\",\n  \"nickname\": \"a{{$timestamp}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"201 COMMON201\", () => { pm.response.to.have.status(201); pm.expect(pm.response.json().code).to.eql(\"COMMON201\"); });",
+              "pm.collectionVariables.set(\"emailA\", pm.response.json().result.email);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. 회원 B 가입 (201)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/members",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "members"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"b{{$timestamp}}@umc.com\",\n  \"password\": \"Umc!1234\",\n  \"nickname\": \"b{{$timestamp}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"201 COMMON201\", () => { pm.response.to.have.status(201); pm.expect(pm.response.json().code).to.eql(\"COMMON201\"); });",
+              "pm.collectionVariables.set(\"emailB\", pm.response.json().result.email);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. A 로그인 → 토큰 A (200)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{emailA}}\",\n  \"password\": \"Umc!1234\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"200 COMMON200\", () => { pm.response.to.have.status(200); pm.expect(pm.response.json().code).to.eql(\"COMMON200\"); });",
+              "pm.collectionVariables.set(\"tokenA\", pm.response.json().result.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. B 로그인 → 토큰 B (200)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{emailB}}\",\n  \"password\": \"Umc!1234\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"200 COMMON200\", () => { pm.response.to.have.status(200); pm.expect(pm.response.json().code).to.eql(\"COMMON200\"); });",
+              "pm.collectionVariables.set(\"tokenB\", pm.response.json().result.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. A 평점 등록 (201)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/ratings",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "ratings"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"movieId\": 680,\n  \"score\": 5,\n  \"comment\": \"펄프 픽션 최고\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenA}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"201 COMMON201\", () => { pm.response.to.have.status(201); pm.expect(pm.response.json().code).to.eql(\"COMMON201\"); });",
+              "pm.collectionVariables.set(\"ratingId\", pm.response.json().result.ratingId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. 같은 영화 중복 등록 (409)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/ratings",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "ratings"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"movieId\": 680,\n  \"score\": 4\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenA}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"409 RATING409_1\", () => { pm.response.to.have.status(409); pm.expect(pm.response.json().code).to.eql(\"RATING409_1\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. A 본인 평점 수정 (200)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/ratings/{{ratingId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "ratings",
+            "{{ratingId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"score\": 3,\n  \"comment\": \"다시 보니 보통\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenA}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"200 COMMON200\", () => { pm.response.to.have.status(200); pm.expect(pm.response.json().code).to.eql(\"COMMON200\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. B가 A 평점 수정 (403)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/ratings/{{ratingId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "ratings",
+            "{{ratingId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"score\": 1,\n  \"comment\": \"남의 평점 수정 시도\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenB}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"403 RATING403_1\", () => { pm.response.to.have.status(403); pm.expect(pm.response.json().code).to.eql(\"RATING403_1\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. 토큰 없이 수정 (401)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/ratings/{{ratingId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "ratings",
+            "{{ratingId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"score\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"401 AUTH401_2\", () => { pm.response.to.have.status(401); pm.expect(pm.response.json().code).to.eql(\"AUTH401_2\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. 없는 평점 삭제 (404)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/ratings/99999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "ratings",
+            "99999"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenA}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"404 RATING404_1\", () => { pm.response.to.have.status(404); pm.expect(pm.response.json().code).to.eql(\"RATING404_1\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. A 본인 평점 삭제 (200)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/ratings/{{ratingId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "ratings",
+            "{{ratingId}}"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenA}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"200 COMMON200\", () => { pm.response.to.have.status(200); pm.expect(pm.response.json().code).to.eql(\"COMMON200\"); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
