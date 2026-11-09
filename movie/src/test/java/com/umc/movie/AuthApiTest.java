@@ -67,14 +67,14 @@ class AuthApiTest {
 
     @Test
     void 토큰_없이_잠긴_경로는_401_AUTH401_2() throws Exception {
-        mockMvc.perform(delete("/members/1/ratings/1"))
+        mockMvc.perform(delete("/ratings/1"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value("AUTH401_2"));
     }
 
     @Test
     void 위조된_토큰은_401_AUTH401_3() throws Exception {
-        mockMvc.perform(delete("/members/1/ratings/1")
+        mockMvc.perform(delete("/ratings/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer abc.def.ghi"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value("AUTH401_3"));
