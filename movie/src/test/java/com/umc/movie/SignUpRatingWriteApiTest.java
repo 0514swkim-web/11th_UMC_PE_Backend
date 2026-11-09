@@ -1,10 +1,12 @@
 package com.umc.movie;
 
 import com.umc.movie.repository.MemberRepository;
+import com.umc.movie.util.JwtUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,14 @@ class SignUpRatingWriteApiTest {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    JwtUtil jwtUtil;
+
+    // 7주차: 수정·삭제는 인터셉터가 잠그므로 1번 회원(수현) 토큰을 붙여서 요청
+    private String bearerOfMember1() {
+        return "Bearer " + jwtUtil.createAccessToken(1L, "noco@umc.com");
+    }
 
     private static final String SIGN_UP_BODY = """
             {"email": "umc@example.com", "password": "Umc!1234", "nickname": "moviefan"}
@@ -99,7 +109,7 @@ class SignUpRatingWriteApiTest {
 
     @Test
     void 평점_수정_200_삭제_204() throws Exception {
-        mockMvc.perform(patch("/members/1/ratings/1").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(patch("/members/1/ratings/1").header(HttpHeaders.AUTHORIZATION, bearerOfMember1()).contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"score": 3, "comment": "다시 보니 보통"}
                                 """))
@@ -109,7 +119,7 @@ class SignUpRatingWriteApiTest {
         mockMvc.perform(get("/members/1/ratings"))
                 .andExpect(jsonPath("$[1].score").value(3));
 
-        mockMvc.perform(delete("/members/1/ratings/1"))
+        mockMvc.perform(delete("/members/1/ratings/1").header(HttpHeaders.AUTHORIZATION, bearerOfMember1()))
                 .andExpect(status().isNoContent())
                 .andExpect(content().string(""));
 
@@ -119,12 +129,12 @@ class SignUpRatingWriteApiTest {
 
     @Test
     void 없는_평점은_404_남의_평점은_403() throws Exception {
-        mockMvc.perform(delete("/members/1/ratings/999"))
+        mockMvc.perform(delete("/members/1/ratings/999").header(HttpHeaders.AUTHORIZATION, bearerOfMember1()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("COMMON404"));
 
         // 3번 평점은 2번 회원(민서) 것
-        mockMvc.perform(delete("/members/1/ratings/3"))
+        mockMvc.perform(delete("/members/1/ratings/3").header(HttpHeaders.AUTHORIZATION, bearerOfMember1()))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.code").value("COMMON403"));
     }
