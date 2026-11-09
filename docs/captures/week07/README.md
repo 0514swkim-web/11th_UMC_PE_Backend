@@ -25,6 +25,8 @@ Postman 컬렉션: [`movie/postman/week07.postman_collection.json`](../../../mov
 | `17-rating-no-token-401.png` | 7단계 시나리오 9. 토큰 없이 수정 → 401 `AUTH401_2` (인증 실패) | 미션 기록 | ✅ |
 | `18-rating-delete-404.png` | 7단계 시나리오 10. `DELETE /ratings/99999` → 404 `RATING404_1` | 미션 기록 | ✅ |
 | `19-rating-delete-own-200.png` | 7단계 시나리오 11. 토큰 A로 `DELETE /ratings/5` → 200 "평점을 삭제했습니다." | 미션 기록 | ✅ |
+| `20-members-me-no-token-401.png` | 추가. 토큰 없이 `GET /members/me` → 401 `AUTH401_2` (워크북 제출물 2) | 실습 인증 | ✅ |
+| `21-tampered-token-401.png` | 추가. 토큰 payload 글자 하나를 바꿔 `GET /members/me` → 401 `AUTH401_3` (서명 검증 실패) | 미션 기록 | ✅ |
 | `90-troubleshoot-postman-url.png` | 3단계 트러블슈팅. 주소 칸에 `POST http://...`까지 적어 `Invalid protocol: post http:` | 트러블 슈팅 1 | ✅ |
 
 ## 미리보기
@@ -85,6 +87,12 @@ Postman 컬렉션: [`movie/postman/week07.postman_collection.json`](../../../mov
 
 ### 7단계 시나리오 11. rating-delete-own-200
 ![](19-rating-delete-own-200.png)
+
+### 추가. members-me-no-token-401
+![](20-members-me-no-token-401.png)
+
+### 추가. tampered-token-401
+![](21-tampered-token-401.png)
 
 ### 3단계 트러블슈팅. troubleshoot-postman-url
 ![](90-troubleshoot-postman-url.png)
