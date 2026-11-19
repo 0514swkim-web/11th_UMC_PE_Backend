@@ -86,6 +86,7 @@ class AuthApiTest {
         mockMvc.perform(get("/members/me").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("COMMON200"))
+                .andExpect(jsonPath("$.result.memberId").value(1)) // 8주차: 내 번호도 응답에 포함
                 .andExpect(jsonPath("$.result.email").value("noco@umc.com"))
                 .andExpect(jsonPath("$.result.nickname").value("수현"))
                 .andExpect(jsonPath("$.result.password").doesNotExist());
